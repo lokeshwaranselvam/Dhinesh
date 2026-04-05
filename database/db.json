@@ -1,0 +1,6 @@
+cat > /home/claude/project/database/db.json << 'EOF'
+{
+  "applications": {},
+  "audit_chain": []
+}
+EOF

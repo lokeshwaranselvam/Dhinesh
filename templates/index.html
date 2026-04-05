@@ -1,0 +1,128 @@
+cat > /home/claude/project/templates/index.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>e-Sevai Middleware | Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <nav class="nav">
+    <div class="nav-brand">
+      <span class="nav-dot"></span>
+      <span>e-Sevai <strong>Middleware</strong></span>
+    </div>
+    <div class="nav-links">
+      <a href="/" class="active">Dashboard</a>
+      <a href="/upload">New Application</a>
+      <a href="/api/chain/verify" target="_blank">Verify Chain</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="page-header">
+      <div>
+        <p class="label">INTELLIGENT GOVERNANCE LAYER</p>
+        <h1>Application Dashboard</h1>
+      </div>
+      <a href="/upload" class="btn-primary">+ New Application</a>
+    </header>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-value">{{ stats.total }}</p>
+        <p class="stat-label">Total Applications</p>
+      </div>
+      <div class="stat-card accent-blue">
+        <p class="stat-value">{{ stats.pending }}</p>
+        <p class="stat-label">Pending Review</p>
+      </div>
+      <div class="stat-card accent-green">
+        <p class="stat-value">{{ stats.approved }}</p>
+        <p class="stat-label">Approved</p>
+      </div>
+      <div class="stat-card accent-orange">
+        <p class="stat-value">{{ stats.flagged }}</p>
+        <p class="stat-label">Flagged (Risk)</p>
+      </div>
+      <div class="stat-card accent-red">
+        <p class="stat-value">{{ stats.delayed }}</p>
+        <p class="stat-label">Delayed / Escalated</p>
+      </div>
+    </div>
+
+    <!-- Applications Table -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Recent Applications</h2>
+        <span class="badge">{{ applications | length }} records</span>
+      </div>
+
+      {% if applications %}
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>APP ID</th>
+              <th>CITIZEN</th>
+              <th>SERVICE</th>
+              <th>RISK</th>
+              <th>STATUS</th>
+              <th>SUBMITTED</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in applications %}
+            <tr>
+              <td><code>{{ a.id }}</code></td>
+              <td>{{ a.form_data.name }}</td>
+              <td>{{ a.service }}</td>
+              <td>
+                <span class="risk-badge risk-{{ a.risk }}">{{ a.risk | upper }}</span>
+              </td>
+              <td>
+                <span class="status-badge {% if 'Approved' in a.status %}s-approved{% elif 'Reject' in a.status %}s-rejected{% elif 'Delayed' in a.status or 'Escalated' in a.status %}s-delayed{% else %}s-pending{% endif %}">
+                  {{ a.status }}
+                </span>
+              </td>
+              <td class="mono text-muted">{{ a.submitted_at[:10] }}</td>
+              <td><a href="/result/{{ a.id }}" class="link-arrow">View →</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <p class="empty-icon">📋</p>
+        <p>No applications yet. <a href="/upload">Submit the first one →</a></p>
+      </div>
+      {% endif %}
+    </section>
+
+    <!-- System Info -->
+    <section class="section info-grid">
+      <div class="info-card">
+        <h3>🔗 Audit Chain</h3>
+        <p>Every action is stored in a tamper-evident append-only chain with SHA-256 hashing.</p>
+        <a href="/api/chain/verify" class="btn-ghost" target="_blank">Verify Integrity</a>
+      </div>
+      <div class="info-card">
+        <h3>🤖 OCR Verification</h3>
+        <p>Documents are automatically scanned and fields compared against form data before officer review.</p>
+      </div>
+      <div class="info-card">
+        <h3>⏱ SLA Enforcement</h3>
+        <p>Time limits per step. Breached SLAs auto-escalate and require officer justification.</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+HTMLEOF

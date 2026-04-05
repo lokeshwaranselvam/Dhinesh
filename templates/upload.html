@@ -1,0 +1,106 @@
+cat > /home/claude/project/templates/upload.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>e-Sevai Middleware | Submit Application</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <nav class="nav">
+    <div class="nav-brand">
+      <span class="nav-dot"></span>
+      <span>e-Sevai <strong>Middleware</strong></span>
+    </div>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/upload" class="active">New Application</a>
+    </div>
+  </nav>
+
+  <main class="container container-narrow">
+    <header class="page-header">
+      <div>
+        <p class="label">CITIZEN PORTAL</p>
+        <h1>Submit Application</h1>
+        <p class="subtitle">Your documents will be verified automatically using OCR before officer review.</p>
+      </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data" class="form-card">
+      <div class="form-section">
+        <h3>Service Details</h3>
+        <div class="form-group">
+          <label>Service Required</label>
+          <select name="service" required>
+            <option value="" disabled selected>Select a service...</option>
+            {% for s in services %}
+            <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Personal Information</h3>
+        <p class="hint">Enter details exactly as they appear in your documents.</p>
+
+        <div class="form-group">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" name="name" placeholder="As on ID document" required/>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date of Birth <span class="req">*</span></label>
+            <input type="text" name="dob" placeholder="DD-MM-YYYY" required/>
+          </div>
+          <div class="form-group">
+            <label>Aadhaar Number</label>
+            <input type="text" name="aadhaar" placeholder="12-digit Aadhaar"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Address</label>
+          <textarea name="address" rows="3" placeholder="Current residential address"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Document Upload</h3>
+        <p class="hint">Upload your supporting document (PDF, PNG, JPG). Our system will OCR and verify it automatically.</p>
+        <div class="drop-zone" id="dropZone">
+          <input type="file" name="document" id="fileInput" accept=".pdf,.png,.jpg,.jpeg" required/>
+          <div class="drop-zone-content" id="dropContent">
+            <div class="drop-icon">📄</div>
+            <p><strong>Click to upload</strong> or drag & drop</p>
+            <p class="hint">PDF, PNG, JPG up to 16MB</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <div class="ai-notice">
+          <span class="ai-dot"></span>
+          <span>AI-powered OCR will verify your document fields before sending to officer</span>
+        </div>
+        <button type="submit" class="btn-primary btn-lg">Submit Application →</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+</body>
+</html>
+HTMLEOF
