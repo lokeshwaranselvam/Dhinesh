@@ -1,4 +1,3 @@
-cat > /home/claude/project/utils/helpers.py << 'PYEOF'
 import os
 import uuid
 import hashlib
@@ -34,7 +33,4 @@ def format_duration(seconds: int) -> str:
         return f"{seconds // 60}m"
     if seconds < 86400:
         return f"{seconds // 3600}h"
-    return f"{seconds // 86400}d"
-PYEOF
-
-touch /home/claude/project/utils/__init__.py
+    return f"{seconds // 86400}d"

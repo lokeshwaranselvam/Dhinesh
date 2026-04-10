@@ -1,4 +1,3 @@
-cat > /home/claude/project/modules/ocr_engine.py << 'PYEOF'
 """
 OCR Engine - extracts text from uploaded documents (PDF/image).
 Falls back to mock extraction if tesseract is not installed.
@@ -56,4 +55,3 @@ def _mock_text(filepath: str) -> str:
         "Annual Income: Rs. 1,20,000\n"
         "Issued by: Revenue Department\n"
     )
-PYEOF

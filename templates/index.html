@@ -1,128 +1,87 @@
-cat > /home/claude/project/templates/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>e-Sevai Middleware | Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-Sevai Intelligent Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <div class="noise"></div>
-
-  <nav class="nav">
-    <div class="nav-brand">
-      <span class="nav-dot"></span>
-      <span>e-Sevai <strong>Middleware</strong></span>
-    </div>
-    <div class="nav-links">
-      <a href="/" class="active">Dashboard</a>
-      <a href="/upload">New Application</a>
-      <a href="/api/chain/verify" target="_blank">Verify Chain</a>
-    </div>
-  </nav>
-
-  <main class="container">
-    <header class="page-header">
-      <div>
-        <p class="label">INTELLIGENT GOVERNANCE LAYER</p>
-        <h1>Application Dashboard</h1>
-      </div>
-      <a href="/upload" class="btn-primary">+ New Application</a>
+    <header>
+        <h1>e-Sevai Intelligent Governance <span style="font-size: 0.8rem; background: var(--warning); color: #000; padding: 2px 8px; border-radius: 4px; vertical-align: middle; margin-left: 10px;">Official Portal</span></h1>
+        <nav>
+            <a href="/official/dashboard">Dashboard</a>
+            <a href="/api/chain/verify" target="_blank">Verify Blockchain</a>
+            <a href="/logout" style="color: var(--danger);">Logout</a>
+        </nav>
     </header>
 
-    <!-- Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <p class="stat-value">{{ stats.total }}</p>
-        <p class="stat-label">Total Applications</p>
-      </div>
-      <div class="stat-card accent-blue">
-        <p class="stat-value">{{ stats.pending }}</p>
-        <p class="stat-label">Pending Review</p>
-      </div>
-      <div class="stat-card accent-green">
-        <p class="stat-value">{{ stats.approved }}</p>
-        <p class="stat-label">Approved</p>
-      </div>
-      <div class="stat-card accent-orange">
-        <p class="stat-value">{{ stats.flagged }}</p>
-        <p class="stat-label">Flagged (Risk)</p>
-      </div>
-      <div class="stat-card accent-red">
-        <p class="stat-value">{{ stats.delayed }}</p>
-        <p class="stat-label">Delayed / Escalated</p>
-      </div>
-    </div>
+    <main>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Applications</h3>
+                <div class="value">{{ stats.total }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Pending Review</h3>
+                <div class="value">{{ stats.pending }}</div>
+            </div>
+            <div class="stat-card success">
+                <h3>Approved</h3>
+                <div class="value">{{ stats.approved }}</div>
+            </div>
+            <div class="stat-card danger">
+                <h3>High Risk / Flagged</h3>
+                <div class="value">{{ stats.flagged }}</div>
+            </div>
+        </div>
 
-    <!-- Applications Table -->
-    <section class="section">
-      <div class="section-header">
-        <h2>Recent Applications</h2>
-        <span class="badge">{{ applications | length }} records</span>
-      </div>
-
-      {% if applications %}
-      <div class="table-wrap">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>APP ID</th>
-              <th>CITIZEN</th>
-              <th>SERVICE</th>
-              <th>RISK</th>
-              <th>STATUS</th>
-              <th>SUBMITTED</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for a in applications %}
-            <tr>
-              <td><code>{{ a.id }}</code></td>
-              <td>{{ a.form_data.name }}</td>
-              <td>{{ a.service }}</td>
-              <td>
-                <span class="risk-badge risk-{{ a.risk }}">{{ a.risk | upper }}</span>
-              </td>
-              <td>
-                <span class="status-badge {% if 'Approved' in a.status %}s-approved{% elif 'Reject' in a.status %}s-rejected{% elif 'Delayed' in a.status or 'Escalated' in a.status %}s-delayed{% else %}s-pending{% endif %}">
-                  {{ a.status }}
-                </span>
-              </td>
-              <td class="mono text-muted">{{ a.submitted_at[:10] }}</td>
-              <td><a href="/result/{{ a.id }}" class="link-arrow">View →</a></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      {% else %}
-      <div class="empty-state">
-        <p class="empty-icon">📋</p>
-        <p>No applications yet. <a href="/upload">Submit the first one →</a></p>
-      </div>
-      {% endif %}
-    </section>
-
-    <!-- System Info -->
-    <section class="section info-grid">
-      <div class="info-card">
-        <h3>🔗 Audit Chain</h3>
-        <p>Every action is stored in a tamper-evident append-only chain with SHA-256 hashing.</p>
-        <a href="/api/chain/verify" class="btn-ghost" target="_blank">Verify Integrity</a>
-      </div>
-      <div class="info-card">
-        <h3>🤖 OCR Verification</h3>
-        <p>Documents are automatically scanned and fields compared against form data before officer review.</p>
-      </div>
-      <div class="info-card">
-        <h3>⏱ SLA Enforcement</h3>
-        <p>Time limits per step. Breached SLAs auto-escalate and require officer justification.</p>
-      </div>
-    </section>
-  </main>
+        <div class="card">
+            <h2>Recent Incoming Applications</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>APP ID</th>
+                        <th>Citizen Name</th>
+                        <th>Service Type</th>
+                        <th>Risk Level</th>
+                        <th>SLA Status</th>
+                        <th>Submitted</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in applications %}
+                    <tr>
+                        <td style="font-weight: 600; color: var(--primary);">#{{ a.id[:8] }}</td>
+                        <td>{{ a.form_data.name }}</td>
+                        <td>{{ a.service }}</td>
+                        <td>
+                            <span class="badge {% if a.risk == 'low' %}badge-success{% elif a.risk == 'medium' %}badge-warning{% else %}badge-danger{% endif %}">
+                                {{ a.risk }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge {% if 'Delayed' in a.status %}badge-danger{% elif 'Approved' in a.status %}badge-success{% else %}badge-info{% endif %}">
+                                {{ a.status }}
+                            </span>
+                        </td>
+                        <td>{{ a.submitted_at[11:16] }} ({{ a.submitted_at[:10] }})</td>
+                        <td>
+                            <a href="/official/review/{{ a.id }}" style="text-decoration: none;">
+                                <button style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Review</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not applications %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No applications found in the system.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </main>
 </body>
 </html>
-HTMLEOF

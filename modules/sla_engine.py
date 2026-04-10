@@ -1,4 +1,3 @@
-cat > /home/claude/project/modules/sla_engine.py << 'PYEOF'
 """
 SLA Engine - tracks time limits per step and triggers escalations.
 """
@@ -11,8 +10,11 @@ from utils.helpers import timestamp_now
 def _load_db(db_path):
     if not os.path.exists(db_path):
         return {"applications": {}, "audit_chain": []}
-    with open(db_path) as f:
-        return json.load(f)
+    try:
+        with open(db_path) as f:
+            return json.load(f)
+    except (json.JSONDecodeError, ValueError):
+        return {"applications": {}, "audit_chain": []}
 
 
 def _save_db(db_path, data):
@@ -73,7 +75,4 @@ def complete_sla_step(db_path, app_id, step: str):
     if step in app.get("sla", {}):
         app["sla"][step]["status"] = "completed"
         db["applications"][app_id] = app
-        _save_db(db_path, db)
-PYEOF
-
-touch /home/claude/project/modules/__init__.py
+        _save_db(db_path, db)
