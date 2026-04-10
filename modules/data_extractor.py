@@ -1,4 +1,3 @@
-cat > /home/claude/project/modules/data_extractor.py << 'PYEOF'
 """
 Data Extractor - parses structured fields from raw OCR text.
 """
@@ -7,20 +6,28 @@ import re
 
 PATTERNS = {
     "name": [
-        r"Name[:\s]+([A-Za-z\s\.]+)",
-        r"Applicant[:\s]+([A-Za-z\s\.]+)",
+        r"Name[:\s]+([A-Z][a-z\s\.]+)",
+        r"Applicant[:\s]+([A-Z][a-z\s\.]+)",
+        # Heuristic: Find text after "To" specifically on Aadhaar cards
+        r"To\s*\n+([A-Z][A-Za-z\s]+)",
+        # Heuristic: Capitalized lines that look like names
+        r"([A-Z]{3,}\s[A-Z]{3,}(?:\s[A-Z])?)\b",
     ],
     "dob": [
-        r"Date of Birth[:\s]+([\d\-/\.]+)",
-        r"DOB[:\s]+([\d\-/\.]+)",
-        r"D\.O\.B[:\s]+([\d\-/\.]+)",
+        r"Date of Birth[:\s/]+([\d\-/\.]+)",
+        r"DOB[:\s/]+([\d\-/\.]+)",
+        r"D\.O\.B[:\s/]+([\d\-/\.]+)",
     ],
     "address": [
-        r"Address[:\s]+(.+?)(?:\n|Aadhaar|Community|$)",
+        # Match "Address:" but ensure it doesn't match the "should be updated" instruction
+        r"Address[:\s]*(?!\s*should\s+be\s+updated)(.+?)(?:\n\n|Aadhaar|Community|$)",
+        r"Address[:\s]*(.+?)(?:\n\n|Aadhaar|Community|$)",
     ],
     "aadhaar": [
         r"Aadhaar[:\s]+([\d\s]{12,16})",
         r"Aadhar[:\s]+([\d\s]{12,16})",
+        # Match 12 digits directly (4-4-4 format)
+        r"\b(\d{4}\s\d{4}\s\d{4})\b",
     ],
     "community": [
         r"Community[:\s]+([A-Za-z/\s]+)",
@@ -49,4 +56,3 @@ def extract_fields(raw_text: str) -> dict:
                 break
 
     return extracted
-PYEOF

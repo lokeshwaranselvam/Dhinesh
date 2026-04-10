@@ -1,4 +1,3 @@
-cat > /home/claude/project/modules/audit_logger.py << 'PYEOF'
 """
 Append-only audit chain with tamper-evident hashing (blockchain-inspired).
 Each entry references the hash of the previous entry.
@@ -11,8 +10,11 @@ from utils.helpers import generate_id, timestamp_now, hash_block
 def _load_db(db_path):
     if not os.path.exists(db_path):
         return {"applications": {}, "audit_chain": []}
-    with open(db_path, "r") as f:
-        return json.load(f)
+    try:
+        with open(db_path, "r") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, ValueError):
+        return {"applications": {}, "audit_chain": []}
 
 
 def _save_db(db_path, data):
@@ -73,5 +75,4 @@ def verify_chain_integrity(db_path):
         if entry["prev_hash"] != prev_hash:
             return False, f"Broken at entry {entry['id']}"
         prev_hash = entry["hash"]
-    return True, "Chain intact"
-PYEOF
+    return True, "Chain intact"
